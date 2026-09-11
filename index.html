@@ -194,6 +194,12 @@ p{margin:0;}
 .pay-modal-card input:focus{outline:none; border-color:var(--gold);}
 .pay-modal-err{display:none; color:#b3402c !important; font-size:.82rem !important; margin:-.4rem 0 .9rem !important;}
 .pay-modal-err.show{display:block;}
+.pay-modal-check{
+  display:flex; align-items:flex-start; gap:.6rem; margin:.2rem 0 .5rem; cursor:pointer;
+  font-size:.86rem; color:var(--ink-soft); line-height:1.45;
+}
+.pay-modal-check input{width:15px; height:15px; margin-top:.15rem; accent-color:var(--gold); flex:none; cursor:pointer;}
+.pay-modal-hint{font-size:.78rem !important; color:var(--dim) !important; margin:0 0 1.1rem !important; line-height:1.5;}
 .pay-modal-card .btn{width:100%;}
 
 /* ===================== HERO ===================== */
@@ -514,6 +520,11 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
     <input type="text" id="payName" placeholder="Имя" autocomplete="name">
     <input type="tel" id="payPhone" placeholder="Телефон, например +7 900 000-00-00" autocomplete="tel">
     <p class="pay-modal-err" id="payModalErr">Заполните имя и телефон</p>
+    <label class="pay-modal-check">
+      <input type="checkbox" id="payZkFlag">
+      <span>Я уже оплачиваю «Астровкус жизни» (закрытый канал с лунным календарём)</span>
+    </label>
+    <p class="pay-modal-hint">Отмечайте, только если у вас прямо сейчас активна и оплачена эта подписка - мы зачтём неиспользованный остаток в счёт клуба. Если не уверены, оставьте пустым - разберёмся при первом сообщении.</p>
     <button class="btn btn--gold" id="payModalSubmit" type="button">Перейти к оплате</button>
   </div>
 </div>
@@ -948,6 +959,7 @@ payModalSubmit.addEventListener('click', function(){
   }
   var plan = pendingTier.getAttribute('data-plan');
   var amount = Number(pendingTier.getAttribute('data-amount'));
+  var zkFlag = document.getElementById('payZkFlag').checked;
   var widget = new cp.CloudPayments();
   closePayModal();
   widget.pay('charge', {
@@ -956,13 +968,14 @@ payModalSubmit.addEventListener('click', function(){
     amount: amount,
     currency: 'RUB',
     requireEmail: true,
-    data: { plan: plan, name: name, phone: phone }
+    data: { plan: plan, name: name, phone: phone, zk: zkFlag ? 'да' : 'нет' }
   }, {
     onSuccess: function(){
       var cena = document.getElementById('cena');
       var box = document.createElement('div');
       box.className = 'pay-thanks';
-      box.innerHTML = '<h3>Спасибо, ' + name.split(' ')[0] + '!</h3><p>Оплата прошла. Мы напишем вам в Telegram по номеру ' + phone + ' в течение пары дней после закрытия окна набора - и пришлём доступ на почту.</p>';
+      var zkLine = zkFlag ? ' Вы отметили, что уже в «Астровкусе жизни», - мы посчитаем остаток и учтём его отдельно.' : '';
+      box.innerHTML = '<h3>Спасибо, ' + name.split(' ')[0] + '!</h3><p>Оплата прошла. Мы напишем вам в Telegram по номеру ' + phone + ' в течение пары дней после закрытия окна набора - и пришлём доступ на почту.' + zkLine + '</p>';
       cena.querySelector('.wrap').appendChild(box);
       box.scrollIntoView({behavior:'smooth', block:'center'});
     },

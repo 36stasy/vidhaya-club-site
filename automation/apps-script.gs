@@ -26,9 +26,16 @@ function doPost(e) {
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
-    sheet.appendRow(['Дата', 'Имя', 'Телефон', 'Email', 'Сумма', 'Тариф', 'TransactionId']);
+    sheet.appendRow(['Дата', 'Имя', 'Телефон', 'Email', 'Сумма', 'Тариф', 'Уже в ЗК?', 'TransactionId']);
   }
-  sheet.appendRow([data.date, data.name || '', data.phone || '', data.email || '', data.amount, data.plan, data.transactionId]);
+  var isZk = data.zk === 'да';
+  sheet.appendRow([data.date, data.name || '', data.phone || '', data.email || '', data.amount, data.plan, isZk ? 'ДА - зачесть остаток' : '', data.transactionId]);
+
+  // подсвечиваем строку жёлтым, если человек уже платит за ЗК/Астровкус жизни - чтобы не потерялось
+  if (isZk) {
+    var lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 1, 1, sheet.getLastColumn()).setBackground('#fff3d6');
+  }
 
   if (data.email) {
     var firstName = (data.name || '').split(' ')[0] || 'дорогая гостья';

@@ -28,18 +28,20 @@ export default {
 
     const params = new URLSearchParams(bodyText);
     const data = Object.fromEntries(params.entries());
-    // Ключевые поля от CloudPayments: Amount, Currency, Email, TransactionId, Data (наш JSON с plan/name/phone)
-    let plan = '-', clientName = '', clientPhone = '';
+    // Ключевые поля от CloudPayments: Amount, Currency, Email, TransactionId, Data (наш JSON с plan/name/phone/zk)
+    let plan = '-', clientName = '', clientPhone = '', zk = 'нет';
     try {
       const extra = JSON.parse(data.Data || '{}');
       plan = extra.plan || '-';
       clientName = extra.name || '';
       clientPhone = extra.phone || '';
+      zk = extra.zk || 'нет';
     } catch (e) {}
 
     const tasks = [];
 
     if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_ADMIN_CHAT_ID) {
+      const zkLine = zk === 'да' ? `\n⚠️ УЖЕ В ЗК/Астровкусе — зачесть остаток!` : '';
       const text =
         `💛 Новая оплата — клуб «Внутренний путь»\n` +
         `Имя: ${clientName || '—'}\n` +
@@ -47,7 +49,8 @@ export default {
         `Тариф: ${plan}\n` +
         `Сумма: ${data.Amount} ${data.Currency || 'RUB'}\n` +
         `Email: ${data.Email || '—'}\n` +
-        `TransactionId: ${data.TransactionId}`;
+        `TransactionId: ${data.TransactionId}` +
+        zkLine;
       tasks.push(
         fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
           method: 'POST',
@@ -69,6 +72,7 @@ export default {
             email: data.Email || '',
             amount: data.Amount || '',
             plan,
+            zk,
             transactionId: data.TransactionId || '',
           }),
         })
