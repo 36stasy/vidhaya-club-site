@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
 <style>
 /* ===================================================================
    ВНУТРЕННИЙ ПУТЬ — продающий сайт клуба
@@ -375,6 +376,14 @@ p{margin:0;}
 .tier .term{font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:.7rem;}
 .tier .price{font-family:var(--serif); font-size:2.3rem; color:var(--ink); margin-bottom:.3rem;}
 .tier .hint{font-size:.87rem; color:var(--gold-deep);}
+.tier .tier-pay{width:100%; margin-top:1.5rem;}
+.tier .tier-pay:disabled{opacity:.45; cursor:not-allowed; filter:grayscale(.3);}
+.consent{
+  display:flex; align-items:flex-start; gap:.7rem; margin-top:clamp(1.8rem,3vw,2.4rem);
+  font-size:.88rem; color:var(--muted); max-width:64ch; cursor:pointer; line-height:1.5;
+}
+.consent input{margin-top:.2rem; width:16px; height:16px; accent-color:var(--gold); flex:none; cursor:pointer;}
+.consent a{color:var(--gold-deep); text-decoration:underline; text-underline-offset:2px;}
 .price-note{
   margin-top:clamp(2.4rem,4vw,3rem); background:var(--gold-wash); border-radius:var(--radius); padding:1.7rem 2rem;
   font-size:.98rem; color:var(--ink-soft); max-width:64ch; line-height:1.6;
@@ -686,10 +695,24 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
     </div>
 
     <div class="tiers">
-      <div class="tier rv"><div class="term">3 месяца</div><div class="price">6 500 ₽</div><div class="hint">попробовать ритм</div></div>
-      <div class="tier best rv"><div class="term">6 месяцев</div><div class="price">11 000 ₽</div><div class="hint">втянуться как следует</div></div>
-      <div class="tier rv"><div class="term">Год</div><div class="price">20 000 ₽</div><div class="hint">для тех, кто надолго</div></div>
+      <div class="tier rv" data-plan="3 месяца" data-amount="6500">
+        <div class="term">3 месяца</div><div class="price">6 500 ₽</div><div class="hint">попробовать ритм</div>
+        <button class="btn btn--gold btn--sm tier-pay" type="button">Оплатить</button>
+      </div>
+      <div class="tier best rv" data-plan="6 месяцев" data-amount="11000">
+        <div class="term">6 месяцев</div><div class="price">11 000 ₽</div><div class="hint">втянуться как следует</div>
+        <button class="btn btn--gold btn--sm tier-pay" type="button">Оплатить</button>
+      </div>
+      <div class="tier rv" data-plan="12 месяцев" data-amount="20000">
+        <div class="term">Год</div><div class="price">20 000 ₽</div><div class="hint">для тех, кто надолго</div>
+        <button class="btn btn--gold btn--sm tier-pay" type="button">Оплатить</button>
+      </div>
     </div>
+
+    <label class="consent rv">
+      <input type="checkbox" id="offerConsent">
+      <span>Принимаю условия <a href="offer.html" target="_blank">публичной оферты</a> и <a href="privacy.html" target="_blank">политики конфиденциальности</a></span>
+    </label>
 
     <p class="price-note rv"><b>Цена фиксируется на всё время продления:</b> зашли сейчас - платите эту же цену и дальше, даже когда вход для новых подорожает. Это меньше одной консультации у Андрея, а рядом с вами - на месяцы вперёд.</p>
 
@@ -816,6 +839,54 @@ var io=new IntersectionObserver(function(entries){
   entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
 },{threshold:.12, rootMargin:'0px 0px -60px 0px'});
 document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+
+/* ===================== ОПЛАТА (CloudPayments) =====================
+   ВАЖНО: вставьте свой Public ID из личного кабинета CloudPayments
+   (Настройки сайта → Публичный ID). Это НЕ секретный ключ — его
+   можно спокойно хранить прямо в HTML. Секретный ключ сюда никогда
+   не вставлять — он нужен только на сервере (см. automation/). */
+var CP_PUBLIC_ID = "ВСТАВЬТЕ_ВАШ_PUBLIC_ID";
+
+var consentBox = document.getElementById('offerConsent');
+var payButtons = document.querySelectorAll('.tier-pay');
+
+function syncPayButtons(){
+  var ok = consentBox && consentBox.checked;
+  payButtons.forEach(function(b){ b.disabled = !ok; });
+}
+if(consentBox){ consentBox.addEventListener('change', syncPayButtons); syncPayButtons(); }
+
+payButtons.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    if(!consentBox || !consentBox.checked){
+      consentBox && consentBox.closest('.consent').scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    if(typeof cp === 'undefined' || CP_PUBLIC_ID.indexOf('ВСТАВЬТЕ') === 0){
+      alert('Приём оплаты пока не подключён — Public ID CloudPayments ещё не вставлен в код сайта.');
+      return;
+    }
+    var tier = btn.closest('.tier');
+    var plan = tier.getAttribute('data-plan');
+    var amount = Number(tier.getAttribute('data-amount'));
+    var widget = new cp.CloudPayments();
+    widget.pay('charge', {
+      publicId: CP_PUBLIC_ID,
+      description: 'Клуб «Внутренний путь» — ' + plan,
+      amount: amount,
+      currency: 'RUB',
+      requireEmail: true,
+      data: { plan: plan }
+    }, {
+      onSuccess: function(){
+        window.location = 'https://t.me/AndreyVidhayaClub_bot';
+      },
+      onFail: function(reason){
+        console.warn('Оплата не прошла:', reason);
+      }
+    });
+  });
+});
 })();
 </script>
 </body>

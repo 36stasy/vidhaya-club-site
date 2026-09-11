@@ -1,0 +1,9 @@
+name = "vidhaya-club-payments"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Секреты НЕ пишем сюда. После деплоя выполните по очереди:
+#   wrangler secret put CLOUDPAYMENTS_SECRET
+#   wrangler secret put TELEGRAM_BOT_TOKEN
+#   wrangler secret put TELEGRAM_ADMIN_CHAT_ID
+#   wrangler secret put APPS_SCRIPT_URL
