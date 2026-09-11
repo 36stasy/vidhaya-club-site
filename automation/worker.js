@@ -28,15 +28,22 @@ export default {
 
     const params = new URLSearchParams(bodyText);
     const data = Object.fromEntries(params.entries());
-    // Ключевые поля от CloudPayments: Amount, Currency, Email, TransactionId, Data (наш JSON с planом)
-    let plan = '-';
-    try { plan = JSON.parse(data.Data || '{}').plan || '-'; } catch (e) {}
+    // Ключевые поля от CloudPayments: Amount, Currency, Email, TransactionId, Data (наш JSON с plan/name/phone)
+    let plan = '-', clientName = '', clientPhone = '';
+    try {
+      const extra = JSON.parse(data.Data || '{}');
+      plan = extra.plan || '-';
+      clientName = extra.name || '';
+      clientPhone = extra.phone || '';
+    } catch (e) {}
 
     const tasks = [];
 
     if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_ADMIN_CHAT_ID) {
       const text =
         `💛 Новая оплата — клуб «Внутренний путь»\n` +
+        `Имя: ${clientName || '—'}\n` +
+        `Телефон: ${clientPhone || '—'}\n` +
         `Тариф: ${plan}\n` +
         `Сумма: ${data.Amount} ${data.Currency || 'RUB'}\n` +
         `Email: ${data.Email || '—'}\n` +
@@ -57,6 +64,8 @@ export default {
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
             date: new Date().toISOString(),
+            name: clientName,
+            phone: clientPhone,
             email: data.Email || '',
             amount: data.Amount || '',
             plan,

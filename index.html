@@ -171,6 +171,31 @@ p{margin:0;}
 }
 @media (max-width:980px){.mobile-cta{display:block;}}
 
+/* pre-payment name/phone modal */
+.pay-modal{
+  display:none; position:fixed; inset:0; z-index:110; align-items:center; justify-content:center;
+  padding:1.5rem; background:rgba(33,26,36,.6); backdrop-filter:blur(6px);
+}
+.pay-modal.open{display:flex;}
+.pay-modal-card{
+  background:var(--ivory); border-radius:var(--radius-lg); padding:clamp(1.8rem,4vw,2.6rem);
+  max-width:400px; width:100%; position:relative; box-shadow:var(--shadow-m);
+}
+.pay-modal-card h3{margin-bottom:.6rem;}
+.pay-modal-card p{font-size:.92rem; color:var(--muted); margin-bottom:1.4rem; line-height:1.55;}
+.pay-modal-close{
+  position:absolute; top:1.1rem; right:1.1rem; background:none; border:none; font-size:1.4rem;
+  color:var(--muted); cursor:pointer; line-height:1; padding:.3rem;
+}
+.pay-modal-card input{
+  width:100%; padding:.85rem 1rem; margin-bottom:.9rem; border-radius:12px; border:1px solid var(--line);
+  background:#fff; font-family:var(--sans); font-size:.95rem; color:var(--ink);
+}
+.pay-modal-card input:focus{outline:none; border-color:var(--gold);}
+.pay-modal-err{display:none; color:#b3402c !important; font-size:.82rem !important; margin:-.4rem 0 .9rem !important;}
+.pay-modal-err.show{display:block;}
+.pay-modal-card .btn{width:100%;}
+
 /* ===================== HERO ===================== */
 /* Обложка уже несёт своё название, эмблему и слоган — здесь только вход. */
 .hero{
@@ -346,7 +371,9 @@ p{margin:0;}
 @media (prefers-reduced-motion:reduce){.star{animation:none;}}
 .dusha h2{color:#fff;}
 .dusha .lead{color:var(--night-muted);}
-.tcarousel-wrap{margin-top:clamp(3rem,5vw,4rem);}
+.quote-strip{display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem 2.4rem; margin-top:clamp(2.4rem,4vw,3.2rem);}
+.quote-strip p{font-family:var(--serif); font-style:italic; font-size:1.05rem; color:rgba(255,255,255,.82); text-align:center;}
+.tcarousel-wrap{margin-top:clamp(2.4rem,4vw,3.2rem);}
 .tcarousel{
   display:flex; align-items:flex-start; gap:1.1rem; overflow-x:auto; scroll-snap-type:x proximity;
   padding:.3rem clamp(1.25rem,5vw,3rem) 1rem; margin:0 clamp(-1.25rem,-5vw,-3rem);
@@ -389,6 +416,12 @@ p{margin:0;}
   font-size:.98rem; color:var(--ink-soft); max-width:64ch; line-height:1.6;
 }
 .price-note b{color:var(--gold-deep);}
+.pay-thanks{
+  margin-top:clamp(2rem,4vw,2.8rem); background:var(--gold-wash); border-radius:var(--radius);
+  padding:1.8rem 2rem; max-width:64ch;
+}
+.pay-thanks h3{margin-bottom:.5rem;}
+.pay-thanks p{font-size:.95rem; color:var(--ink-soft); line-height:1.6;}
 
 /* honest terms row */
 .terms-row{display:grid; grid-template-columns:repeat(2,1fr); gap:1.3rem; margin-top:clamp(2.4rem,4vw,3rem);}
@@ -471,6 +504,18 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
 
 <div class="mobile-cta" id="mobileCta">
   <a class="btn btn--gold" href="#cena">Войти в клуб</a>
+</div>
+
+<div class="pay-modal" id="payModal">
+  <div class="pay-modal-card">
+    <button class="pay-modal-close" id="payModalClose" type="button" aria-label="Закрыть">×</button>
+    <h3>Перед оплатой</h3>
+    <p>Оставьте имя и телефон, привязанный к Telegram, - так мы быстрее всего вас найдём и откроем доступ.</p>
+    <input type="text" id="payName" placeholder="Имя" autocomplete="name">
+    <input type="tel" id="payPhone" placeholder="Телефон, например +7 900 000-00-00" autocomplete="tel">
+    <p class="pay-modal-err" id="payModalErr">Заполните имя и телефон</p>
+    <button class="btn btn--gold" id="payModalSubmit" type="button">Продолжить к оплате</button>
+  </div>
 </div>
 
 <!-- ============================ HERO ============================ -->
@@ -661,13 +706,35 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
       <p class="lead">Тело можно скопировать. Душу - нет. Вот как об этом говорят сами участницы.</p>
     </div>
 
+    <div class="quote-strip rv">
+      <p>«Любовь и родительскую заботу»</p>
+      <p>«Нашла вторых молодых родителей»</p>
+      <p>«С вами как всегда уютно, спокойно и тепло»</p>
+    </div>
+
     <div class="tcarousel-wrap rv">
       <div class="tcarousel">
-        <div class="tcard"><img src="img/testimonials/t1.png" alt="Сообщение из клубного чата" loading="lazy"></div>
-        <div class="tcard"><img src="img/testimonials/t2.png" alt="Сообщение из клубного чата" loading="lazy"></div>
-        <div class="tcard"><img src="img/testimonials/t3.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t7.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t8.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t9.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t10.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t11.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t12.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t13.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t14.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t15.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t16.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t17.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t18.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t19.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t20.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t21.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t22.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t23.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t24.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t25.png" alt="Сообщение из клубного чата" loading="lazy"></div>
+        <div class="tcard"><img src="img/testimonials/t26.png" alt="Сообщение из клубного чата" loading="lazy"></div>
         <div class="tcard"><img src="img/testimonials/t4.png" alt="Сообщение из клубного чата" loading="lazy"></div>
-        <div class="tcard"><img src="img/testimonials/t5.png" alt="Сообщение из клубного чата" loading="lazy"></div>
         <div class="tcard"><img src="img/testimonials/t6.png" alt="Сообщение из клубного чата" loading="lazy"></div>
       </div>
       <p class="tcarousel-hint">настоящие сообщения из клубного чата · листайте →</p>
@@ -779,8 +846,8 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
       <div class="foot-logo">Внутренний путь<span>Трансформация</span></div>
       <nav class="foot-nav">
         <a href="#sut">Суть</a><a href="#cel">Цель</a><a href="#telo">Тело</a><a href="#dusha">Душа</a><a href="#cena">Цена</a>
-        <a href="https://t.me/AndreyVidhayaClub_bot" target="_blank" rel="noopener">Telegram-бот клуба</a>
         <a href="https://t.me/astrologvidhaya" target="_blank" rel="noopener">Канал Андрея</a>
+        <a href="https://t.me/astrolog_wife" target="_blank" rel="noopener">Канал Светланы</a>
       </nav>
     </div>
     <div class="foot-legal">
@@ -846,32 +913,62 @@ document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
 var CP_PUBLIC_ID = "pk_bbd8ffeaa06b2272ad1cadbfc0500";
 
 var payButtons = document.querySelectorAll('.tier-pay');
+var payModal = document.getElementById('payModal');
+var payName = document.getElementById('payName');
+var payPhone = document.getElementById('payPhone');
+var payErr = document.getElementById('payModalErr');
+var payModalSubmit = document.getElementById('payModalSubmit');
+var pendingTier = null;
+
+function openPayModal(tier){
+  pendingTier = tier;
+  payErr.classList.remove('show');
+  payModal.classList.add('open');
+}
+function closePayModal(){
+  payModal.classList.remove('open');
+  pendingTier = null;
+}
 
 payButtons.forEach(function(btn){
-  btn.addEventListener('click', function(){
-    if(typeof cp === 'undefined' || CP_PUBLIC_ID.indexOf('ВСТАВЬТЕ') === 0){
-      alert('Приём оплаты пока не подключён — Public ID CloudPayments ещё не вставлен в код сайта.');
-      return;
+  btn.addEventListener('click', function(){ openPayModal(btn.closest('.tier')); });
+});
+document.getElementById('payModalClose').addEventListener('click', closePayModal);
+payModal.addEventListener('click', function(e){ if(e.target === payModal) closePayModal(); });
+
+payModalSubmit.addEventListener('click', function(){
+  var name = payName.value.trim();
+  var phone = payPhone.value.trim();
+  if(!name || phone.length < 5){ payErr.classList.add('show'); return; }
+  payErr.classList.remove('show');
+
+  if(typeof cp === 'undefined' || CP_PUBLIC_ID.indexOf('ВСТАВЬТЕ') === 0){
+    alert('Приём оплаты пока не подключён — Public ID CloudPayments ещё не вставлен в код сайта.');
+    return;
+  }
+  var plan = pendingTier.getAttribute('data-plan');
+  var amount = Number(pendingTier.getAttribute('data-amount'));
+  var widget = new cp.CloudPayments();
+  closePayModal();
+  widget.pay('charge', {
+    publicId: CP_PUBLIC_ID,
+    description: 'Клуб «Внутренний путь» — ' + plan,
+    amount: amount,
+    currency: 'RUB',
+    requireEmail: true,
+    data: { plan: plan, name: name, phone: phone }
+  }, {
+    onSuccess: function(){
+      var cena = document.getElementById('cena');
+      var box = document.createElement('div');
+      box.className = 'pay-thanks';
+      box.innerHTML = '<h3>Спасибо, ' + name.split(' ')[0] + '!</h3><p>Оплата прошла. Мы напишем вам в Telegram по номеру ' + phone + ' в течение пары дней после закрытия окна набора - и пришлём доступ на почту.</p>';
+      cena.querySelector('.wrap').appendChild(box);
+      box.scrollIntoView({behavior:'smooth', block:'center'});
+    },
+    onFail: function(reason){
+      console.warn('Оплата не прошла:', reason);
     }
-    var tier = btn.closest('.tier');
-    var plan = tier.getAttribute('data-plan');
-    var amount = Number(tier.getAttribute('data-amount'));
-    var widget = new cp.CloudPayments();
-    widget.pay('charge', {
-      publicId: CP_PUBLIC_ID,
-      description: 'Клуб «Внутренний путь» — ' + plan,
-      amount: amount,
-      currency: 'RUB',
-      requireEmail: true,
-      data: { plan: plan }
-    }, {
-      onSuccess: function(){
-        window.location = 'https://t.me/AndreyVidhayaClub_bot';
-      },
-      onFail: function(reason){
-        console.warn('Оплата не прошла:', reason);
-      }
-    });
   });
 });
 })();

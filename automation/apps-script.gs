@@ -26,26 +26,47 @@ function doPost(e) {
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
-    sheet.appendRow(['Дата', 'Email', 'Сумма', 'Тариф', 'TransactionId']);
+    sheet.appendRow(['Дата', 'Имя', 'Телефон', 'Email', 'Сумма', 'Тариф', 'TransactionId']);
   }
-  sheet.appendRow([data.date, data.email, data.amount, data.plan, data.transactionId]);
+  sheet.appendRow([data.date, data.name || '', data.phone || '', data.email || '', data.amount, data.plan, data.transactionId]);
 
   if (data.email) {
+    var firstName = (data.name || '').split(' ')[0] || 'дорогая гостья';
     MailApp.sendEmail({
       to: data.email,
-      subject: 'Добро пожаловать в клуб «Внутренний путь»',
-      htmlBody:
-        '<p>Здравствуйте!</p>' +
-        '<p>Спасибо за оплату — вы в клубе «Внутренний путь. Трансформация» (тариф: <b>' + data.plan + '</b>).</p>' +
-        '<p>Доступ к материалам открывается вручную и появится у вас в Telegram-боте клуба ' +
-        '<a href="https://t.me/AndreyVidhayaClub_bot">@AndreyVidhayaClub_bot</a> в течение ближайших дней ' +
-        '(конкретная дата открытия доступа — на сайте клуба, раздел «Цена»).</p>' +
-        '<p>Если у вас уже открыт диалог с ботом — просто напишите туда, чтобы мы вас узнали.</p>' +
-        '<p>С теплом,<br>Андрей и Светлана</p>',
+      subject: 'Добро пожаловать в клуб «Внутренний путь» 🌙',
+      htmlBody: buildWelcomeEmail(firstName, data.plan),
     });
   }
 
   return ContentService
     .createTextOutput(JSON.stringify({ ok: true }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function buildWelcomeEmail(firstName, plan) {
+  return (
+    '<div style="font-family:Georgia,serif; color:#2c2430; line-height:1.7; max-width:520px; margin:0 auto;">' +
+    '<p style="font-size:18px;">' + firstName + ', здравствуйте.</p>' +
+    '<p>Спасибо, что доверились и вошли в закрытый клуб <b>«Внутренний путь. Трансформация»</b> - тариф «' + plan + '».</p>' +
+    '<p>Мы с Андреем читаем каждое такое письмо не рабочими глазами, а по-человечески - и правда рады, что вы здесь.</p>' +
+
+    '<h3 style="font-family:Georgia,serif; font-weight:normal; margin-top:28px;">Что дальше</h3>' +
+    '<p>Доступ мы открываем вручную, а не автоматически - чтобы никого не потерять и лично познакомиться. ' +
+    'Мы напишем вам в Telegram на номер, который вы оставили при оплате, в течение нескольких дней после закрытия окна набора ' +
+    '(точные даты - на сайте клуба, раздел «Цена»). Если за это время что-то поменяется - просто ответьте на это письмо.</p>' +
+
+    '<h3 style="font-family:Georgia,serif; font-weight:normal; margin-top:28px;">Как с нами связаться</h3>' +
+    '<p>' +
+    'Канал Андрея: <a href="https://t.me/astrologvidhaya">t.me/astrologvidhaya</a><br>' +
+    'Канал Светланы: <a href="https://t.me/astrolog_wife">t.me/astrolog_wife</a><br>' +
+    'Если что-то срочное - отвечайте прямо на это письмо, мы читаем лично.' +
+    '</p>' +
+
+    '<h3 style="font-family:Georgia,serif; font-weight:normal; margin-top:28px;">На всякий случай напомним</h3>' +
+    '<p>Цена, по которой вы вошли сейчас, зафиксирована за вами на все дальнейшие продления - даже когда вход для новых участниц подорожает.</p>' +
+
+    '<p style="margin-top:32px;">С теплом,<br>Андрей и Светлана</p>' +
+    '</div>'
+  );
 }
