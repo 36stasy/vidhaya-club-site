@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Политика конфиденциальности — Внутренний путь</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap">
+<style>
+@font-face{font-family:'NyghtSerif';src:url('fonts/nyghtserif-regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap;}
+:root{
+  --ivory:#f7f1e5; --surface:#ffffff; --ink:#2c2430; --ink-soft:#463b45; --muted:#6f6459;
+  --gold:#b8763a; --gold-deep:#8c5a24; --line:rgba(150,105,45,0.18);
+  --serif:'NyghtSerif', Georgia, serif; --sans:'Jost','Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--ivory); color:var(--ink-soft); font-family:var(--sans); font-weight:300; line-height:1.75; font-size:16px;}
+.wrap{max-width:760px; margin:0 auto; padding:clamp(2.5rem,6vw,5rem) clamp(1.25rem,5vw,2rem) 6rem;}
+a.back{display:inline-block; margin-bottom:2rem; color:var(--gold-deep); font-size:.9rem; text-decoration:none;}
+a.back:hover{text-decoration:underline;}
+h1{font-family:var(--serif); font-weight:400; font-size:clamp(1.8rem,4vw,2.4rem); color:var(--ink); margin:0 0 .5rem;}
+.updated{font-size:.85rem; color:var(--muted); margin-bottom:2.5rem;}
+h2{font-family:var(--serif); font-weight:400; font-size:1.35rem; color:var(--ink); margin:2.6rem 0 1rem;}
+p{margin:0 0 1rem;}
+ul,ol{margin:0 0 1rem; padding-left:1.3rem;}
+li{margin-bottom:.5rem;}
+.ph{background:#fff3d6; color:#7a5a12; padding:.1rem .4rem; border-radius:5px; font-size:.92em; white-space:nowrap;}
+.note{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:1.4rem 1.6rem; font-size:.92rem; color:var(--muted); margin:2.5rem 0;}
+.note b{color:var(--gold-deep);}
+strong{color:var(--ink);}
+table{width:100%; border-collapse:collapse; margin:1rem 0 1.5rem; font-size:.92rem;}
+th,td{text-align:left; padding:.6rem .7rem; border-bottom:1px solid var(--line); vertical-align:top;}
+th{color:var(--ink); font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← вернуться на сайт клуба</a>
+  <h1>Политика конфиденциальности</h1>
+  <p class="updated">Редакция от <span class="ph">[дата публикации]</span>.</p>
+
+  <div class="note">
+    <b>Черновик, а не готовый документ.</b> Заполните поля в скобках реальными данными. Требования 152-ФЗ («О персональных данных») учтены в общем виде — если данные участников будут выгружаться в Google Таблицы и передаваться в CloudPayments, стоит свериться с юристом, не нужна ли отдельная регистрация оператора персональных данных в Роскомнадзоре — для небольшого ИП это обычно формальность, но пропускать её не стоит.
+  </div>
+
+  <h2>1. Общие положения</h2>
+  <p><span class="ph">[Наименование Исполнителя, ИНН]</span> (далее — «мы») обрабатывает персональные данные участников клуба «Внутренний путь. Трансформация» в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
+  <p>Используя сайт клуба и оплачивая доступ, вы соглашаетесь с условиями этой политики.</p>
+
+  <h2>2. Какие данные мы собираем</h2>
+  <table>
+    <tr><th>Данные</th><th>Когда получаем</th></tr>
+    <tr><td>Имя, ник и ID в Telegram</td><td>при обращении в Telegram-бот клуба</td></tr>
+    <tr><td>E-mail</td><td>при оплате — для отправки доступа и чеков</td></tr>
+    <tr><td>Данные банковской карты</td><td>не получаем и не храним — оплату полностью обрабатывает платёжный сервис CloudPayments, у которого своя политика конфиденциальности</td></tr>
+  </table>
+
+  <h2>3. Зачем нам эти данные</h2>
+  <ul>
+    <li>открыть доступ к материалам клуба и личному кабинету;</li>
+    <li>прислать чек и подтверждение оплаты;</li>
+    <li>ответить на вопросы в чате клуба;</li>
+    <li>напомнить об окончании подписки и предложить продление.</li>
+  </ul>
+  <p>Мы не используем ваши данные ни для чего, кроме перечисленного, и не продаём их третьим лицам.</p>
+
+  <h2>4. Кому передаём данные</h2>
+  <ul>
+    <li><strong>CloudPayments</strong> — обрабатывает оплату; видит данные карты, мы — нет;</li>
+    <li><strong>Telegram</strong> — через него работает бот доступа и чат клуба;</li>
+    <li><strong><span class="ph">[Google / сервис таблиц]</span></strong> — внутренний учёт оплативших участников, доступ ограничен командой клуба.</li>
+  </ul>
+
+  <h2>5. Как храним и защищаем</h2>
+  <p>Данные хранятся в личном кабинете, Telegram и <span class="ph">[Google Таблицах / CRM]</span> с ограниченным доступом — только у Андрея и Светланы и технической команды, обслуживающей клуб. Мы не храним данные банковских карт ни в каком виде.</p>
+
+  <h2>6. Ваши права</h2>
+  <p>Вы можете в любой момент запросить, какие данные о вас у нас есть, попросить их исправить или удалить — напишите на <span class="ph">[email для обращений по ПДн]</span> или в Telegram-бот клуба.</p>
+
+  <h2>7. Cookies и технические данные</h2>
+  <p>Сайт клуба — статичная страница без форм сбора данных и без рекламных счётчиков. Браузер может локально сохранять технические настройки отображения (например, состояние меню) — эти данные не покидают ваше устройство и не передаются нам.</p>
+
+  <h2>8. Контакты</h2>
+  <p>По вопросам обработки персональных данных: <span class="ph">[email]</span> или <a href="https://t.me/astrologvidhaya" target="_blank" rel="noopener">Telegram-канал Андрея</a>.</p>
+</div>
+</body>
+</html>
