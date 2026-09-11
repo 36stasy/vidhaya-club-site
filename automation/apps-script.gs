@@ -1,41 +1,21 @@
 /**
- * Google Apps Script — веб-приложение, которое получает данные об оплате от
- * Cloudflare Worker и: 1) дописывает строку в Google Таблицу, 2) шлёт клиенту
- * письмо о вступлении в клуб. Работает от вашего Google-аккаунта — отдельных
- * ключей/сервисных аккаунтов не нужно.
+ * Google Apps Script — САМОСТОЯТЕЛЬНЫЙ скрипт (без таблицы), который получает
+ * данные об оплате от Cloudflare Worker и шлёт клиенту письмо о вступлении
+ * в клуб. Работает от вашего Google-аккаунта - отдельных ключей не нужно.
  *
- * Установка:
- * 1. Создайте новую Google Таблицу (или откройте существующую для учёта оплат).
- * 2. В ней: Расширения → Apps Script. Вставьте сюда весь этот файл целиком,
- *    заменив содержимое Code.gs.
- * 3. Замените SHEET_NAME при необходимости.
- * 4. Разверните: Deploy → New deployment → тип "Web app".
+ * Установка (без Google Таблиц, только письмо):
+ * 1. Откройте script.google.com → New project.
+ * 2. Сотрите содержимое Code.gs, вставьте сюда весь этот файл целиком.
+ * 3. Deploy → New deployment → тип "Web app".
  *      Execute as: Me
  *      Who has access: Anyone
- *    Скопируйте выданный URL — это и есть APPS_SCRIPT_URL для Cloudflare Worker.
- * 5. При первом запуске Google попросит разрешения (доступ к таблице и Gmail) —
- *    это нормально, подтвердите под своим аккаунтом.
+ *    Скопируйте выданный URL - это и есть APPS_SCRIPT_URL для Cloudflare Worker.
+ * 4. При первом запуске Google попросит разрешение на отправку писем от
+ *    вашего имени - подтвердите под своим аккаунтом.
  */
-
-var SHEET_NAME = 'Оплаты';
 
 function doPost(e) {
   var data = JSON.parse(e.postData.contents);
-
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAME);
-    sheet.appendRow(['Дата', 'Имя', 'Телефон', 'Email', 'Сумма', 'Тариф', 'Уже в ЗК?', 'TransactionId']);
-  }
-  var isZk = data.zk === 'да';
-  sheet.appendRow([data.date, data.name || '', data.phone || '', data.email || '', data.amount, data.plan, isZk ? 'ДА - зачесть остаток' : '', data.transactionId]);
-
-  // подсвечиваем строку жёлтым, если человек уже платит за ЗК/Астровкус жизни - чтобы не потерялось
-  if (isZk) {
-    var lastRow = sheet.getLastRow();
-    sheet.getRange(lastRow, 1, 1, sheet.getLastColumn()).setBackground('#fff3d6');
-  }
 
   if (data.email) {
     var firstName = (data.name || '').split(' ')[0] || 'дорогая гостья';
