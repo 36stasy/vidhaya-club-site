@@ -157,16 +157,18 @@ p{margin:0;}
 .mobile-menu a{font-family:var(--serif); font-style:italic; font-size:1.3rem; font-weight:400; letter-spacing:.01em; color:var(--night-ink); padding:.35rem 0;}
 .mobile-menu .btn{margin-top:1.1rem; padding:.85rem 2.4rem; font-size:.92rem;}
 
-/* floating CTA — mobile only, appears once hero is scrolled past */
+/* floating CTA — mobile only, appears once hero is scrolled past, hides near footer */
 .mobile-cta{
-  display:none; position:fixed; left:0; right:0; bottom:0; z-index:90;
-  padding:.85rem clamp(1.25rem,5vw,2rem) calc(.85rem + env(safe-area-inset-bottom, 0px));
-  background:rgba(247,241,229,.94); backdrop-filter:blur(14px);
-  border-top:1px solid var(--line); box-shadow:0 -12px 30px -14px rgba(60,40,10,.4);
-  transform:translateY(100%); transition:transform .35s ease;
+  display:none; position:fixed; left:50%; bottom:14px; z-index:90; transform:translate(-50%,140%);
+  transition:transform .3s ease;
 }
-.mobile-cta.show{transform:translateY(0);}
-.mobile-cta .btn{width:100%;}
+.mobile-cta.show{transform:translate(-50%,0);}
+.mobile-cta .btn{
+  padding:.62rem 1.5rem; font-size:.86rem;
+  background:rgba(247,241,229,.96); backdrop-filter:blur(10px);
+  color:var(--gold-deep); border:1px solid var(--line);
+  box-shadow:0 10px 24px -10px rgba(60,40,10,.45);
+}
 @media (max-width:980px){.mobile-cta{display:block;}}
 
 /* ===================== HERO ===================== */
@@ -377,13 +379,11 @@ p{margin:0;}
 .tier .price{font-family:var(--serif); font-size:2.3rem; color:var(--ink); margin-bottom:.3rem;}
 .tier .hint{font-size:.87rem; color:var(--gold-deep);}
 .tier .tier-pay{width:100%; margin-top:1.5rem;}
-.tier .tier-pay:disabled{opacity:.45; cursor:not-allowed; filter:grayscale(.3);}
 .consent{
-  display:flex; align-items:flex-start; gap:.7rem; margin-top:clamp(1.8rem,3vw,2.4rem);
-  font-size:.88rem; color:var(--muted); max-width:64ch; cursor:pointer; line-height:1.5;
+  margin-top:clamp(1.8rem,3vw,2.4rem);
+  font-size:.85rem; color:var(--dim); max-width:64ch; line-height:1.5;
 }
-.consent input{margin-top:.2rem; width:16px; height:16px; accent-color:var(--gold); flex:none; cursor:pointer;}
-.consent a{color:var(--gold-deep); text-decoration:underline; text-underline-offset:2px;}
+.consent a{color:var(--muted); text-decoration:underline; text-underline-offset:2px;}
 .price-note{
   margin-top:clamp(2.4rem,4vw,3rem); background:var(--gold-wash); border-radius:var(--radius); padding:1.7rem 2rem;
   font-size:.98rem; color:var(--ink-soft); max-width:64ch; line-height:1.6;
@@ -709,10 +709,7 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
       </div>
     </div>
 
-    <label class="consent rv">
-      <input type="checkbox" id="offerConsent">
-      <span>Принимаю условия <a href="offer.html" target="_blank">публичной оферты</a> и <a href="privacy.html" target="_blank">политики конфиденциальности</a></span>
-    </label>
+    <p class="consent rv">Нажимая «Оплатить», вы соглашаетесь с условиями <a href="offer.html" target="_blank">публичной оферты</a> и <a href="privacy.html" target="_blank">политики конфиденциальности</a></p>
 
     <p class="price-note rv"><b>Цена фиксируется на всё время продления:</b> зашли сейчас - платите эту же цену и дальше, даже когда вход для новых подорожает. Это меньше одной консультации у Андрея, а рядом с вами - на месяцы вперёд.</p>
 
@@ -812,11 +809,13 @@ function syncMcta(){ if(menu.classList.contains('open')){ mcta.classList.remove(
 burger.addEventListener('click',function(){menu.classList.toggle('open'); burger.classList.toggle('active'); syncMcta();});
 menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open'); burger.classList.remove('active');});});
 
-/* floating mobile CTA — show once past hero, hide near top and while menu is open */
+/* floating mobile CTA — show once past hero, hide near top, near footer, and while menu is open */
 var heroEl=document.getElementById('hero');
+var footerEl=document.querySelector('footer');
 function onMctaScroll(){
   var pastHero=window.scrollY > (heroEl ? heroEl.offsetHeight*0.6 : 500);
-  if(pastHero && !menu.classList.contains('open')){ mcta.classList.add('show'); }
+  var nearFooter=footerEl && (window.scrollY + window.innerHeight) > (footerEl.offsetTop - 40);
+  if(pastHero && !nearFooter && !menu.classList.contains('open')){ mcta.classList.add('show'); }
   else{ mcta.classList.remove('show'); }
 }
 window.addEventListener('scroll',onMctaScroll,{passive:true}); onMctaScroll();
@@ -846,21 +845,10 @@ document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
    не вставлять — он нужен только на сервере (см. automation/). */
 var CP_PUBLIC_ID = "pk_bbd8ffeaa06b2272ad1cadbfc0500";
 
-var consentBox = document.getElementById('offerConsent');
 var payButtons = document.querySelectorAll('.tier-pay');
-
-function syncPayButtons(){
-  var ok = consentBox && consentBox.checked;
-  payButtons.forEach(function(b){ b.disabled = !ok; });
-}
-if(consentBox){ consentBox.addEventListener('change', syncPayButtons); syncPayButtons(); }
 
 payButtons.forEach(function(btn){
   btn.addEventListener('click', function(){
-    if(!consentBox || !consentBox.checked){
-      consentBox && consentBox.closest('.consent').scrollIntoView({behavior:'smooth', block:'center'});
-      return;
-    }
     if(typeof cp === 'undefined' || CP_PUBLIC_ID.indexOf('ВСТАВЬТЕ') === 0){
       alert('Приём оплаты пока не подключён — Public ID CloudPayments ещё не вставлен в код сайта.');
       return;
