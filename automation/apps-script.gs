@@ -60,7 +60,7 @@ function buildWelcomeEmail(firstName, plan) {
         '<tr><td style="padding:26px 40px 0;"><div style="height:1px; background:' + line + ';"></div></td></tr>' +
         '<tr><td style="padding:24px 40px 4px;">' +
           '<div style="font-family:Georgia,serif; font-style:italic; font-size:15px; color:' + gold + '; margin-bottom:8px;">Что дальше</div>' +
-          '<p style="font-size:14.5px; line-height:1.7; color:' + soft + '; margin:0;">Доступ мы открываем вручную - чтобы никого не потерять и лично познакомиться. Мы напишем вам в Telegram на номер, который вы оставили при оплате, в течение нескольких дней после закрытия окна набора (точные даты - на сайте клуба, раздел «Цена»). Если за это время что-то изменится - просто ответьте на это письмо.</p>' +
+          '<p style="font-size:14.5px; line-height:1.7; color:' + soft + '; margin:0;">Доступ мы открываем вручную - чтобы никого не потерять и лично познакомиться. Мы напишем вам в Telegram на номер, который вы оставили при оплате, в течение нескольких дней после закрытия окна набора (точные даты - на сайте клуба, раздел «Цена»). Если за это время возникнут вопросы - пишите в один из каналов ниже.</p>' +
         '</td></tr>' +
 
         '<tr><td style="padding:26px 40px 0;"><div style="height:1px; background:' + line + ';"></div></td></tr>' +
@@ -68,8 +68,7 @@ function buildWelcomeEmail(firstName, plan) {
           '<div style="font-family:Georgia,serif; font-style:italic; font-size:15px; color:' + gold + '; margin-bottom:8px;">Как с нами связаться</div>' +
           '<p style="font-size:14.5px; line-height:1.85; color:' + soft + '; margin:0;">' +
             'Канал Андрея - <a href="https://t.me/astrologvidhaya" style="color:' + gold + ';">t.me/astrologvidhaya</a><br>' +
-            'Канал Светланы - <a href="https://t.me/astrolog_wife" style="color:' + gold + ';">t.me/astrolog_wife</a><br>' +
-            'Если что-то срочно - отвечайте прямо на это письмо, мы читаем его сами.' +
+            'Канал Светланы - <a href="https://t.me/astrolog_wife" style="color:' + gold + ';">t.me/astrolog_wife</a>' +
           '</p>' +
         '</td></tr>' +
 
