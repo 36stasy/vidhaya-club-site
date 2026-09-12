@@ -19,10 +19,10 @@ function doPost(e) {
 
   if (data.email) {
     var firstName = (data.name || '').split(' ')[0] || 'здравствуйте';
-    MailApp.sendEmail({
-      to: data.email,
-      subject: 'Добро пожаловать в клуб «Внутренний путь»',
+    GmailApp.sendEmail(data.email, 'Добро пожаловать в клуб «Внутренний путь»', 'Откройте это письмо в почтовом клиенте, который поддерживает HTML.', {
       htmlBody: buildWelcomeEmail(firstName, data.plan),
+      from: 'vidhaya@mail.ru',
+      name: 'Андрей и Светлана · Внутренний путь',
     });
   }
 
