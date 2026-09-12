@@ -967,6 +967,7 @@ payModalSubmit.addEventListener('click', function(){
     description: 'Клуб «Внутренний путь» — ' + plan,
     amount: amount,
     currency: 'RUB',
+    invoiceId: 'club-' + Date.now(),
     requireEmail: true,
     data: { plan: plan, name: name, phone: phone, zk: zkFlag ? 'да' : 'нет' }
   }, {
