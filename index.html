@@ -15,7 +15,9 @@
    Палитра унаследована от личного кабинета (тёплый айвори + золото).
    Заголовки/кнопки/лейблы разделов — Bergamasco, текст — Jost.
 =================================================================== */
-@font-face{font-family:'Lighthaus';src:url('fonts/lighthaus.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'Forum';src:url('fonts/forum-regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'NyghtSerif';src:url('fonts/nyghtserif-regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'NyghtSerif';src:url('fonts/nyghtserif-lightitalic.otf') format('opentype');font-weight:300;font-style:italic;font-display:swap;}
 :root{
   --ivory:#f7f1e5;
   --ivory-2:#fbf3e4;
@@ -38,7 +40,8 @@
   --radius:22px;
   --radius-lg:32px;
   --maxw:1180px;
-  --serif:'Lighthaus', Georgia, serif;
+  --serif:'Forum', Georgia, serif;
+  --serif-kicker:'NyghtSerif', Georgia, serif;
   --sans:'Jost','Segoe UI',sans-serif;
   color-scheme:light;
 }
@@ -77,7 +80,7 @@ p{margin:0;}
 .kicker .kl{width:56px; height:1px; flex:none; background:linear-gradient(90deg,transparent,var(--gold));}
 .kicker .kr{display:none; width:56px; height:1px; flex:none; background:linear-gradient(270deg,transparent,var(--gold));}
 .kicker .kt{
-  font-family:var(--serif); font-style:italic; font-weight:400;
+  font-family:var(--serif-kicker); font-style:italic; font-weight:400;
   font-size:clamp(2rem,4.4vw,3rem); line-height:1; letter-spacing:.03em;
   color:var(--gold-deep); white-space:nowrap;
 }
@@ -543,7 +546,7 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
 <!-- ============================ СУТЬ ============================ -->
 <section class="pad" id="sut">
   <div class="wrap">
-    <p class="scene-quote rv">В разговоре с партнёром вдруг ловите фразу - и узнаёте её. Ту же самую, слово в слово, что говорили год назад. Не совпадение. У этого есть чертёж. И его можно прочитать.</p>
+    <p class="scene-quote rv">Ловите в разговоре с партнёром свою же фразу - слово в слово, что говорили год назад. Это не случайность. Такие повторы видны в натальной карте - и их можно прочитать.</p>
     <div class="shead">
       <div class="kicker center"><span class="kl"></span><span class="kt">Суть</span><span class="kr"></span></div>
       <h2>Почему марафоны и советы это не сдвигали, а тут может получиться</h2>
