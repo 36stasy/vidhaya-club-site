@@ -213,6 +213,22 @@ p{margin:0;}
 .pay-modal-offer{margin:.8rem 0 0 !important; text-align:center;}
 .pay-modal-offer a{color:var(--muted); text-decoration:underline; text-underline-offset:2px;}
 
+/* ===================== НАБОР ЗАКРЫТ =====================
+   Класс enroll-closed ставится на <html> автоматически после 27.09.2026 00:00 МСК
+   (см. скрипт «Окно набора» внизу страницы). */
+.closed-box{display:none; max-width:560px; margin:clamp(2.4rem,4vw,3rem) auto 0; text-align:center;
+  border:1px solid var(--line); border-radius:var(--radius); padding:2.2rem 2rem; background:#fff;}
+.closed-box h3{font-family:var(--serif); font-weight:400; font-size:1.6rem; color:var(--ink); margin:0 0 .8rem;}
+.closed-box p{margin:0 auto 1.6rem; max-width:40ch;}
+.enroll-closed .closed-box{display:block;}
+.enroll-closed .tiers,
+.enroll-closed p.consent,
+.enroll-closed .price-note,
+.enroll-closed .terms-row,
+.enroll-closed #cena > .wrap > .cta-row,
+.enroll-closed .mobile-cta,
+.enroll-closed .pay-modal{display:none !important;}
+
 /* ===================== HERO ===================== */
 /* Обложка уже несёт своё название, эмблему и слоган — здесь только вход. */
 .hero{
@@ -553,7 +569,7 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
       <a class="btn btn--gold" href="#cena">Войти в клуб</a>
       <a class="btn btn--ghost-dark" href="#sut">Сначала - суть</a>
     </div>
-    <p class="hero-note">Окно набора: 16-26 сентября · седьмой год клуба</p>
+    <p class="hero-note" data-closed-text="Набор закрыт · следующий - в конце января">Окно набора: 16-26 сентября · седьмой год клуба</p>
   </div>
   <div class="scroll-cue"><span>листайте</span><span class="line"></span></div>
 </header>
@@ -787,8 +803,14 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
   <div class="wrap">
     <div class="shead">
       <div class="kicker center"><span class="kl"></span><span class="kt">Цена</span><span class="kr"></span></div>
-      <h2>Войти можно только в окно набора</h2>
+      <h2 id="cenaTitle">Войти можно только в окно набора</h2>
       <p class="lead">Группа небольшая. Набор открывается всего пару раз в год.</p>
+    </div>
+
+    <div class="closed-box" id="closedBox">
+      <h3>Набор закрыт</h3>
+      <p>Всем, кто зашёл в сентябре, - рады, начинаем вместе. Следующий набор откроем в конце января.</p>
+      <a class="btn btn--gold" href="https://t.me/astrologvidhaya" target="_blank" rel="noopener">Новости о наборе - в канале Андрея</a>
     </div>
 
     <div class="tiers">
@@ -811,7 +833,7 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
     <p class="price-note rv"><b>Цена фиксируется на всё время продления:</b> зашли сейчас - платите эту же цену и дальше, даже когда вход для новых подорожает. Это меньше одной консультации у Андрея, а рядом с вами - на месяцы вперёд.</p>
 
     <div class="terms-row">
-      <div class="term-card rv"><h4>Окно набора: 16-26 сентября</h4><p>Дальше - не раньше конца января. Доступ к урокам откроется 26 сентября, сразу всем: и тем, кто зайдёт сейчас, и тем, кто уже в клубе.</p></div>
+      <div class="term-card window-card rv"><h4>Окно набора: 16-26 сентября</h4><p>Дальше - не раньше конца января. Доступ к урокам откроется 26 сентября, сразу всем: и тем, кто зайдёт сейчас, и тем, кто уже в клубе.</p></div>
       <div class="term-card rv"><h4>Возврата нет. Вот почему</h4><p>Это закрытая группа с наставниками, а не продукт с полки. Поэтому вход спокойный, без давления: если сомневаетесь - сначала напишите, поговорим.</p></div>
     </div>
 
@@ -870,7 +892,7 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
     <h2>Колею легко спутать с судьбой. Это просто колея. И из неё выходят.</h2>
     <p class="lead">Спокойно, в своём темпе, в уютном пространстве, рядом с людьми, которые верят в вас.</p>
     <div class="cta-row"><a class="btn btn--gold" href="#cena">Войти в клуб</a></div>
-    <p class="window">Окно набора: 16–26 сентября</p>
+    <p class="window" data-closed-text="Набор закрыт · следующий - в конце января">Окно набора: 16–26 сентября</p>
   </div>
 </section>
 
@@ -893,6 +915,53 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
     </div>
   </div>
 </footer>
+
+<script>
+/* ===================== ОКНО НАБОРА =====================
+   Набор закрывается сам ровно в 00:00 по Москве 27 сентября 2026 (= 26.09 21:00 UTC).
+   Время берём с сервера (заголовок Date), а не с часов телефона - чтобы неверно
+   выставленные часы у посетителя ничего не меняли. Если сервер не ответил - часы устройства.
+   Проверка закрытого вида заранее: put.vidhaya.ru/?preview=closed                        */
+(function(){
+  "use strict";
+  var CLOSE_AT = Date.UTC(2026, 8, 26, 21, 0, 0);
+  var offset = 0; // разница между временем сервера и часами устройства, мс
+  window.VP_ENROLL_CLOSED = false;
+
+  function nowTrusted(){ return Date.now() + offset; }
+
+  function closeEnrollment(){
+    if (window.VP_ENROLL_CLOSED) return;
+    window.VP_ENROLL_CLOSED = true;
+    document.documentElement.classList.add('enroll-closed');
+    var t = document.getElementById('cenaTitle');
+    if (t) t.textContent = 'Набор в клуб закрыт';
+    document.querySelectorAll('a.btn[href="#cena"]').forEach(function(a){ a.textContent = 'О следующем наборе'; });
+    document.querySelectorAll('[data-closed-text]').forEach(function(el){ el.textContent = el.getAttribute('data-closed-text'); });
+    var modal = document.getElementById('payModal');
+    if (modal) modal.classList.remove('open');
+  }
+
+  function scheduleClose(){
+    var left = CLOSE_AT - nowTrusted();
+    if (left <= 0) { closeEnrollment(); return; }
+    // Если страница открыта через полночь - закроется на глазах. Таймер дробим, чтобы
+    // не зависеть от лимита setTimeout и от «засыпания» вкладки.
+    setTimeout(scheduleClose, Math.min(left, 60000));
+  }
+
+  if (/[?&]preview=closed\b/.test(location.search)) { closeEnrollment(); return; }
+
+  scheduleClose(); // сразу - по часам устройства
+  try {
+    fetch(location.pathname + '?t=' + Date.now(), { method: 'HEAD', cache: 'no-store' }).then(function(r){
+      var d = r.headers.get('Date');
+      if (d) { var s = Date.parse(d); if (!isNaN(s)) offset = s - Date.now(); }
+      scheduleClose(); // уточняем по времени сервера
+    }).catch(function(){});
+  } catch (e) {}
+})();
+</script>
 
 <script>
 (function(){
@@ -966,6 +1035,7 @@ function clearConsentWarning(){
 payConsent.addEventListener('change', function(){ if(payConsent.checked) clearConsentWarning(); });
 
 function openPayModal(tier){
+  if(window.VP_ENROLL_CLOSED){ document.getElementById('cena').scrollIntoView({behavior:'smooth'}); return; }
   pendingTier = tier;
   payErr.classList.remove('show');
   clearConsentWarning();
@@ -983,6 +1053,8 @@ document.getElementById('payModalClose').addEventListener('click', closePayModal
 payModal.addEventListener('click', function(e){ if(e.target === payModal) closePayModal(); });
 
 payModalSubmit.addEventListener('click', function(){
+  // Окно могли открыть до полуночи, а нажать после - проверяем ещё раз прямо перед оплатой.
+  if(window.VP_ENROLL_CLOSED){ closePayModal(); document.getElementById('cena').scrollIntoView({behavior:'smooth'}); return; }
   var name = payName.value.trim();
   var phone = payPhone.value.trim();
   if(!name || phone.length < 5){ payErr.classList.add('show'); return; }
