@@ -206,6 +206,12 @@ p{margin:0;}
 .pay-modal-check input{width:15px; height:15px; margin-top:.15rem; accent-color:var(--gold); flex:none; cursor:pointer;}
 .pay-modal-hint{font-size:.78rem !important; color:var(--dim) !important; margin:0 0 1.1rem !important; line-height:1.5;}
 .pay-modal-card .btn{width:100%;}
+.pay-modal-consent{margin:.6rem 0 .9rem; padding:.55rem .6rem; border-radius:10px; transition:background .2s, box-shadow .2s;}
+.pay-modal-consent input{width:18px; height:18px; margin-top:.1rem;}
+.pay-modal-consent a{color:var(--gold-deep); text-decoration:underline; text-underline-offset:2px;}
+.pay-modal-consent.need{background:#fbe9e4; box-shadow:0 0 0 2px #b3402c inset;}
+.pay-modal-offer{margin:.8rem 0 0 !important; text-align:center;}
+.pay-modal-offer a{color:var(--muted); text-decoration:underline; text-underline-offset:2px;}
 
 /* ===================== HERO ===================== */
 /* Обложка уже несёт своё название, эмблему и слоган — здесь только вход. */
@@ -530,7 +536,13 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
       <span>Я уже оплачиваю «Астровкус жизни» (закрытый канал с лунным календарём)</span>
     </label>
     <p class="pay-modal-hint">Отмечайте, только если у вас прямо сейчас активна и оплачена эта подписка - мы зачтём неиспользованный остаток в счёт клуба. Если не уверены, оставьте пустым - разберёмся при первом сообщении.</p>
+    <label class="pay-modal-check pay-modal-consent" id="payConsentLabel">
+      <input type="checkbox" id="payConsent">
+      <span>Даю <a href="consent.html" target="_blank">согласие на обработку моих персональных данных</a></span>
+    </label>
+    <p class="pay-modal-err" id="payConsentErr">Поставьте галочку выше - без неё оплата не пройдёт</p>
     <button class="btn btn--gold" id="payModalSubmit" type="button">Перейти к оплате</button>
+    <p class="pay-modal-hint pay-modal-offer">Оплачивая, вы принимаете условия <a href="offer.html" target="_blank">публичной оферты</a></p>
   </div>
 </div>
 
@@ -794,7 +806,7 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
       </div>
     </div>
 
-    <p class="consent rv">Нажимая «Оплатить», вы соглашаетесь с условиями <a href="offer.html" target="_blank">публичной оферты</a> и <a href="privacy.html" target="_blank">политики конфиденциальности</a></p>
+    <p class="consent rv">Оплачивая, вы принимаете условия <a href="offer.html" target="_blank">публичной оферты</a>. Как мы обращаемся с вашими данными - в <a href="privacy.html" target="_blank">политике конфиденциальности</a>.</p>
 
     <p class="price-note rv"><b>Цена фиксируется на всё время продления:</b> зашли сейчас - платите эту же цену и дальше, даже когда вход для новых подорожает. Это меньше одной консультации у Андрея, а рядом с вами - на месяцы вперёд.</p>
 
@@ -876,6 +888,8 @@ footer{background:var(--night); color:var(--night-muted); padding-block:3.2rem; 
       <span>Закрытый клуб Андрея и Светланы · «Внутренний путь. Трансформация»</span>
       <a href="offer.html">Публичная оферта</a>
       <a href="privacy.html">Политика конфиденциальности</a>
+      <a href="consent.html">Согласие на обработку персональных данных</a>
+      <span>ИП Кормщиков Андрей Анатольевич · ИНН 402504195120 · ОГРНИП 304402536001949 · vidhaya@mail.ru</span>
     </div>
   </div>
 </footer>
@@ -942,9 +956,19 @@ var payErr = document.getElementById('payModalErr');
 var payModalSubmit = document.getElementById('payModalSubmit');
 var pendingTier = null;
 
+var payConsent = document.getElementById('payConsent');
+var payConsentErr = document.getElementById('payConsentErr');
+var payConsentLabel = document.getElementById('payConsentLabel');
+function clearConsentWarning(){
+  payConsentErr.classList.remove('show');
+  payConsentLabel.classList.remove('need');
+}
+payConsent.addEventListener('change', function(){ if(payConsent.checked) clearConsentWarning(); });
+
 function openPayModal(tier){
   pendingTier = tier;
   payErr.classList.remove('show');
+  clearConsentWarning();
   payModal.classList.add('open');
 }
 function closePayModal(){
@@ -963,6 +987,15 @@ payModalSubmit.addEventListener('click', function(){
   var phone = payPhone.value.trim();
   if(!name || phone.length < 5){ payErr.classList.add('show'); return; }
   payErr.classList.remove('show');
+  // Кнопка всегда нажимается: если нет галочки согласия, не молчим, а показываем, что сделать.
+  if(!payConsent.checked){
+    payConsentErr.classList.add('show');
+    payConsentLabel.classList.add('need');
+    payConsentLabel.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  clearConsentWarning();
+  var consentAt = new Date().toISOString();
 
   if(typeof cp === 'undefined' || CP_PUBLIC_ID.indexOf('ВСТАВЬТЕ') === 0){
     alert('Приём оплаты пока не подключён — Public ID CloudPayments ещё не вставлен в код сайта.');
@@ -980,7 +1013,7 @@ payModalSubmit.addEventListener('click', function(){
     currency: 'RUB',
     invoiceId: 'club-' + Date.now(),
     requireEmail: true,
-    data: { plan: plan, name: name, phone: phone, zk: zkFlag ? 'да' : 'нет' }
+    data: { plan: plan, name: name, phone: phone, zk: zkFlag ? 'да' : 'нет', consent_pd: 'да', consent_pd_at: consentAt, consent_pd_doc: 'consent.html от 21.09.2026' }
   }, {
     onSuccess: function(){
       var cena = document.getElementById('cena');
