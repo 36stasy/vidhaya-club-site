@@ -10,6 +10,25 @@
 <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- ===== Яндекс Метрика (статистика сайта) =====
+     Впишите номер счётчика в VP_METRIKA - и счётчик включится.
+     Пока стоит 0, ничего не грузится и никуда не отправляется. -->
+<script>
+window.VP_METRIKA = 0;
+if (window.VP_METRIKA) {
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+  m[i].l=1*new Date();
+  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+  ym(window.VP_METRIKA, "init", {clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true});
+}
+function vpGoal(name, params){
+  try { if (window.VP_METRIKA && window.ym) ym(window.VP_METRIKA, 'reachGoal', name, params || {}); } catch(e){}
+}
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/0" style="position:absolute;left:-9999px" alt=""></div></noscript>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap">
 <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
 <style>
@@ -1040,6 +1059,7 @@ function openPayModal(tier){
   payErr.classList.remove('show');
   clearConsentWarning();
   payModal.classList.add('open');
+  vpGoal('pay_open', {plan: tier.getAttribute('data-plan')});
 }
 function closePayModal(){
   payModal.classList.remove('open');
@@ -1048,6 +1068,13 @@ function closePayModal(){
 
 payButtons.forEach(function(btn){
   btn.addEventListener('click', function(){ openPayModal(btn.closest('.tier')); });
+});
+/* статистика: откуда нажимают «Войти в клуб» */
+document.querySelectorAll('a[href="#cena"]').forEach(function(a){
+  a.addEventListener('click', function(){
+    var sec = a.closest('section');
+    vpGoal('cta_click', {block: a.closest('.mobile-cta') ? 'нижняя кнопка' : (sec && sec.id ? sec.id : 'шапка')});
+  });
 });
 document.getElementById('payModalClose').addEventListener('click', closePayModal);
 payModal.addEventListener('click', function(e){ if(e.target === payModal) closePayModal(); });
@@ -1061,6 +1088,7 @@ payModalSubmit.addEventListener('click', function(){
   payErr.classList.remove('show');
   // Кнопка всегда нажимается: если нет галочки согласия, не молчим, а показываем, что сделать.
   if(!payConsent.checked){
+    vpGoal('pay_no_consent');
     payConsentErr.classList.add('show');
     payConsentLabel.classList.add('need');
     payConsentLabel.scrollIntoView({behavior:'smooth', block:'center'});
@@ -1077,6 +1105,7 @@ payModalSubmit.addEventListener('click', function(){
   var amount = Number(pendingTier.getAttribute('data-amount'));
   var zkFlag = document.getElementById('payZkFlag').checked;
   var widget = new cp.CloudPayments();
+  vpGoal('pay_submit', {plan: plan, amount: amount});
   closePayModal();
   widget.pay('charge', {
     publicId: CP_PUBLIC_ID,
@@ -1088,6 +1117,7 @@ payModalSubmit.addEventListener('click', function(){
     data: { plan: plan, name: name, phone: phone, zk: zkFlag ? 'да' : 'нет', consent_pd: 'да', consent_pd_at: consentAt, consent_pd_doc: 'consent.html от 21.09.2026' }
   }, {
     onSuccess: function(){
+      vpGoal('pay_success', {plan: plan, amount: amount});
       var cena = document.getElementById('cena');
       var box = document.createElement('div');
       box.className = 'pay-thanks';
@@ -1097,6 +1127,7 @@ payModalSubmit.addEventListener('click', function(){
       box.scrollIntoView({behavior:'smooth', block:'center'});
     },
     onFail: function(reason){
+      vpGoal('pay_fail', {plan: plan});
       console.warn('Оплата не прошла:', reason);
     }
   });
